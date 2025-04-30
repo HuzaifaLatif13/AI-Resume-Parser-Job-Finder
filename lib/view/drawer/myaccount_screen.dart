@@ -83,18 +83,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   }
 
   Future<String?> uploadToCloudinary(File imageFile) async {
-    const cloudName = 'dhgorpjkd';
-    const uploadPreset = 'flutter_uploads';
+    const cloudName = 'YOUR-CLOUD-NAME';
+    const uploadPreset = 'YOUR-CLOUD-PRESET';
 
     final url = Uri.parse(
       'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
     );
-    final request =
-        http.MultipartRequest('POST', url)
-          ..fields['upload_preset'] = uploadPreset
-          ..files.add(
-            await http.MultipartFile.fromPath('file', imageFile.path),
-          );
+    final request = http.MultipartRequest('POST', url)
+      ..fields['upload_preset'] = uploadPreset
+      ..files.add(
+        await http.MultipartFile.fromPath('file', imageFile.path),
+      );
 
     final response = await request.send();
     if (response.statusCode == 200) {
@@ -155,10 +154,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   onTap: _pickImage,
                   child: CircleAvatar(
                     radius: 100,
-                    backgroundImage:
-                        profileImagePath.value.isNotEmpty
-                            ? NetworkImage(profileImagePath.value)
-                            : AssetImage('assets/profile_placeholder.jpg'),
+                    backgroundImage: profileImagePath.value.isNotEmpty
+                        ? NetworkImage(profileImagePath.value)
+                        : AssetImage('assets/profile_placeholder.jpg'),
                     child: Align(
                       alignment: Alignment.bottomRight,
                       child: CircleAvatar(
