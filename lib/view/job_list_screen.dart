@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
+import 'package:parser/const/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'job_details_screen.dart';
@@ -43,7 +43,8 @@ class _JobListScreenState extends State<JobListScreen> {
       isLoading = true;
       isError = false;
     });
-
+    // final API_KEY = '2ba0628913mshba893feccba5faep1dfaf6jsn66c58f2c64c9';
+    final API_KEY = 'bddc4b1903msh9c858829b644892p132bf1jsnc770a5458e0d';
     final searchQuery = widget.searchQuery;
     final url = Uri.parse(
       'https://jobs-api14.p.rapidapi.com/v2/list?query=$searchQuery&location=$location&autoTranslateLocation=true&remoteOnly=false&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor',
@@ -53,8 +54,7 @@ class _JobListScreenState extends State<JobListScreen> {
       final response = await http.get(
         url,
         headers: {
-          'x-rapidapi-key':
-              'YOUR-API-KEY',
+          'x-rapidapi-key': API_KEY,
           'x-rapidapi-host': 'jobs-api14.p.rapidapi.com',
         },
       );
@@ -188,28 +188,13 @@ class _JobListScreenState extends State<JobListScreen> {
     );
   }
 
-  Color getRandomColor() {
-    final List<Color> colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.purple,
-      Colors.orange,
-      Colors.red,
-      Colors.teal,
-    ];
-    return colors[Random().nextInt(colors.length)];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black12,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'Jobs Listing',
-          style: TextStyle(color: Colors.greenAccent, fontSize: 22),
-        ),
+        backgroundColor: AppColors.scaffold,
+        title: Text('Jobs Listing', style: TextStyle(color: AppColors.text)),
         centerTitle: true,
       ),
       body: Padding(
@@ -220,16 +205,14 @@ class _JobListScreenState extends State<JobListScreen> {
             TextField(
               decoration: InputDecoration(
                 hintText: widget.searchQuery,
-                hintStyle: TextStyle(
-                  color: Colors.amberAccent.withOpacity(0.6),
-                ),
+                hintStyle: TextStyle(color: AppColors.hintText),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: Colors.greenAccent, width: 2.0),
                 ),
-                prefixIcon: Icon(Icons.search, color: Colors.greenAccent),
+                prefixIcon: Icon(Icons.search, color: AppColors.text),
               ),
               onChanged: (value) {
                 setState(() {
@@ -249,14 +232,14 @@ class _JobListScreenState extends State<JobListScreen> {
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.amber, width: 1),
+                    side: BorderSide(color: AppColors.success, width: 1),
                   ),
-                  backgroundColor: Colors.brown.withOpacity(0.9),
+                  backgroundColor: AppColors.buttonBackground,
                 ),
                 onPressed: fetchJobs,
                 child: Text(
                   "See results",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(color: AppColors.text, fontSize: 16),
                 ),
               ),
             ),
@@ -269,16 +252,9 @@ class _JobListScreenState extends State<JobListScreen> {
                   isLoading
                       ? Center(
                         child: CircularProgressIndicator(
-                          color: Colors.greenAccent,
+                          color: AppColors.indicator,
                         ),
                       )
-                      // : isError
-                      // ? Center(
-                      //   child: Text(
-                      //     "Failed to load jobs. Please try again.",
-                      //     style: TextStyle(color: Colors.redAccent),
-                      //   ),
-                      // )
                       : jobs.isEmpty
                       ? Center(
                         child: Column(
@@ -287,7 +263,7 @@ class _JobListScreenState extends State<JobListScreen> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppColors.text,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Lottie.asset(
@@ -299,7 +275,7 @@ class _JobListScreenState extends State<JobListScreen> {
                             ),
                             Text(
                               "Seems like, something broke on our side.",
-                              style: TextStyle(color: Colors.white70),
+                              style: TextStyle(color: AppColors.text),
                             ),
                           ],
                         ),
@@ -309,7 +285,7 @@ class _JobListScreenState extends State<JobListScreen> {
                         itemBuilder: (context, index) {
                           final job = jobs[index];
                           return Card(
-                            color: getRandomColor(),
+                            color: AppColors.buttonBackground,
                             margin: EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 6,

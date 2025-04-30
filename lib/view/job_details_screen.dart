@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parser/const/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class JobDetailScreen extends StatelessWidget {
     if (url != null && url.isNotEmpty) {
       final Uri uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
       } else {
         throw 'Could not launch $url';
       }
@@ -25,12 +26,12 @@ class JobDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black12,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.scaffold,
         title: Text(
           'Job Details',
-          style: TextStyle(color: Colors.greenAccent, fontSize: 22),
+          style: TextStyle(color: AppColors.text, fontSize: 22),
         ),
         centerTitle: true,
       ),
@@ -49,7 +50,7 @@ class JobDetailScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: AppColors.buttonBackground,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -59,7 +60,7 @@ class JobDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Apply Now",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(color: AppColors.text, fontSize: 20),
                   ),
                 ),
               ),
@@ -70,20 +71,20 @@ class JobDetailScreen extends StatelessWidget {
                     TextSpan(
                       text: "📛 Company:\n",
                       style: TextStyle(
-                        color: Colors.redAccent,
+                        color: AppColors.text,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextSpan(
                       text: '${job['company'] ?? 'Unknown'}',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(color: AppColors.text, fontSize: 16),
                     ),
                     TextSpan(text: '\n\n'), // Add spacing
                     TextSpan(
                       text: '📍 Location:\n',
                       style: TextStyle(
-                        color: Colors.blue, // Blue color for the heading
+                        color: AppColors.text, // Blue color for the heading
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -92,7 +93,7 @@ class JobDetailScreen extends StatelessWidget {
                       text:
                           '${job['location'] ?? 'Unknown'}, ${job['job_country'] ?? ''}',
                       style: TextStyle(
-                        color: Colors.white, // Default text color
+                        color: AppColors.text, // Default text color
                         fontSize: 16,
                       ),
                     ),
@@ -101,7 +102,7 @@ class JobDetailScreen extends StatelessWidget {
                     TextSpan(
                       text: '💼 Job Type:\n',
                       style: TextStyle(
-                        color: Colors.green, // Green color for the heading
+                        color: AppColors.text, // Green color for the heading
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -109,7 +110,7 @@ class JobDetailScreen extends StatelessWidget {
                     TextSpan(
                       text: '${job['employmentType'] ?? 'N/A'}',
                       style: TextStyle(
-                        color: Colors.white, // Default text color
+                        color: AppColors.text, // Default text color
                         fontSize: 16,
                       ),
                     ),
@@ -118,7 +119,7 @@ class JobDetailScreen extends StatelessWidget {
                     TextSpan(
                       text: '📝 Description:\n',
                       style: TextStyle(
-                        color: Colors.purple, // Purple color for the heading
+                        color: AppColors.text, // Purple color for the heading
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -127,7 +128,7 @@ class JobDetailScreen extends StatelessWidget {
                       text:
                           '${job['description'] ?? 'No description available.'}',
                       style: TextStyle(
-                        color: Colors.white, // Default text color
+                        color: AppColors.text, // Default text color
                         fontSize: 16,
                       ),
                     ),

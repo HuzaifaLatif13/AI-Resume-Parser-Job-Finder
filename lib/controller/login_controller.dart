@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:parser/modals/user.dart';
 
-import '../parsing/resume_parser_screen.dart';
+import '../view/resume_parser_screen.dart';
 
 class LoginController extends GetxController {
   final TextEditingController email = TextEditingController();
   final TextEditingController pass = TextEditingController();
   final TextEditingController name = TextEditingController();
-  UserAccount? userAccount;
+  UserAccount userAccount = UserAccount();
   var emailText = ''.obs;
   var passText = ''.obs;
   var nameText = ''.obs;
@@ -20,6 +20,11 @@ class LoginController extends GetxController {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  // LoginController() {
+  //   loadUser();
+  //   clearAll();
+  // }
 
   @override
   void onInit() async {
@@ -58,6 +63,7 @@ class LoginController extends GetxController {
 
       if (snapshot.exists) {
         userAccount = UserAccount.fromJson(snapshot.data()!);
+        print(userAccount.resumes.length);
       }
     }
   }
@@ -76,17 +82,19 @@ class LoginController extends GetxController {
         id: uid,
         name: name.text.trim(),
         email: email.text.trim(),
+        profilePicture:
+            "https://www.freepik.com/premium-vector/3d-vector-icon-simple-blue-user-profile-icon-with-white-features_404491443.htm#fromView=keyword&page=1&position=12&uuid=7cef09de-8ff2-43b3-8dbf-236edf28caf8&query=Default+User",
         password: pass.text.trim(),
         resumes: [],
       );
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
-          .set(userAccount!.toJson());
+          .set(userAccount.toJson());
 
       Get.snackbar('Success', 'Signed in with Email');
       clearAll();
-      Get.offAll(ResumeParserScreen());
+      Get.offAll(ResumeParserScreen(resume: Resume()));
     } catch (e) {
       Get.snackbar('Error', e.toString());
     }
@@ -111,7 +119,8 @@ class LoginController extends GetxController {
 
       Get.snackbar('Success', 'Logged in with Email');
       clearAll();
-      Get.offAll(ResumeParserScreen());
+      loadUser();
+      Get.offAll(ResumeParserScreen(resume: Resume()));
     } catch (e) {
       Get.snackbar('Error', e.toString());
       clearAll();
@@ -144,7 +153,8 @@ class LoginController extends GetxController {
         id: uid,
         name: user.displayName,
         email: user.email,
-        password: '',
+        profilePicture: user.photoUrl,
+        password: '******',
         resumes: [],
       );
       await FirebaseFirestore.instance
@@ -155,7 +165,8 @@ class LoginController extends GetxController {
       isLoading.value = false;
       Get.snackbar('Success', 'Logged in with Google');
       clearAll();
-      Get.offAll(ResumeParserScreen());
+      loadUser();
+      Get.offAll(ResumeParserScreen(resume: Resume()));
       return await auth.signInWithCredential(credential);
     } catch (e) {
       Get.snackbar('Error', e.toString());
@@ -177,6 +188,11 @@ class LoginController extends GetxController {
         .doc(_user.id.value)
         .update(_user.toJson());
     userAccount = _user;
-    Get.snackbar('Success', 'Updated Successfully');
+    loadUser();
+    Get.snackbar(
+      'Success',
+      'Updated Successfully',
+      backgroundColor: Colors.green,
+    );
   }
 }

@@ -2,9 +2,10 @@ import 'package:get/get.dart';
 
 class UserAccount {
   var id = ''.obs;
-  var name = ''.obs;
-  var email = ''.obs;
-  var password = ''.obs;
+  var name = 'Unknown'.obs;
+  var email = 'No Email'.obs;
+  var profilePicture = ''.obs;
+  var password = '********'.obs;
   var resumes = <Resume>[].obs;
 
   // Constructor
@@ -12,12 +13,14 @@ class UserAccount {
     String? id,
     String? name,
     String? email,
+    String? profilePicture,
     String? password,
     List<Resume>? resumes,
   }) {
     this.id.value = id ?? '';
-    this.name.value = name ?? '';
-    this.email.value = email ?? '';
+    this.name.value = name ?? 'Unknown';
+    this.email.value = email ?? 'No Email';
+    this.profilePicture.value = profilePicture ?? '';
     this.password.value = password ?? '';
     if (resumes != null) {
       this.resumes.assignAll(resumes);
@@ -30,6 +33,7 @@ class UserAccount {
       'id': id.value,
       'name': name.value,
       'email': email.value,
+      'profilePicture': profilePicture.value,
       'password': password.value,
       'resumes': resumes.map((resume) => resume.toJson()).toList(),
     };
@@ -41,6 +45,7 @@ class UserAccount {
       id: json['id'],
       name: json['name'],
       email: json['email'],
+      profilePicture: json['profilePicture'],
       password: json['password'],
       resumes:
           (json['resumes'] as List<dynamic>?)
@@ -52,12 +57,12 @@ class UserAccount {
 }
 
 class Resume {
-  var name = ''.obs;
-  var email = ''.obs;
-  var phone = ''.obs;
-  var skills = ''.obs;
-  var education = ''.obs;
-  var projects = ''.obs;
+  var name = 'No data'.obs;
+  var email = 'No data'.obs;
+  var phone = 'No data'.obs;
+  var skills = 'No data'.obs;
+  var education = 'No data'.obs;
+  var projects = 'No data'.obs;
   var jobRoles = <String>[].obs;
 
   // Constructor
@@ -70,12 +75,12 @@ class Resume {
     String? projects,
     List<String>? jobRoles,
   }) {
-    this.name.value = name ?? '';
-    this.email.value = email ?? '';
-    this.phone.value = phone ?? '';
-    this.skills.value = skills ?? '';
-    this.education.value = education ?? '';
-    this.projects.value = projects ?? '';
+    this.name.value = name ?? 'No data';
+    this.email.value = email ?? 'No data';
+    this.phone.value = phone ?? 'No data';
+    this.skills.value = skills ?? 'No data';
+    this.education.value = education ?? 'No data';
+    this.projects.value = projects ?? 'No data';
     if (jobRoles != null) {
       this.jobRoles.assignAll(jobRoles);
     }

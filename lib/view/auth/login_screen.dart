@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:parser/const/colors.dart';
+import 'package:parser/controller/login_controller.dart';
+import 'package:parser/view/auth/signup_screen.dart';
 
-import '../controller/login_controller.dart';
-
-class SignupScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
   final LoginController controller = Get.put(LoginController());
 
-  SignupScreen({super.key});
+  LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.black12,
+      backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -20,47 +21,8 @@ class SignupScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Sign In',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.orangeAccent,
-              ),
-            ),
-            Obx(
-              () => TextField(
-                keyboardType: TextInputType.text,
-                controller: controller.name,
-                onChanged: (value) {
-                  controller.nameText.value = value;
-                },
-                decoration: InputDecoration(
-                  fillColor: Colors.blueGrey.withOpacity(0.5),
-                  filled: true,
-                  labelText: 'Name',
-                  labelStyle: TextStyle(color: Colors.green),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.greenAccent),
-                  ),
-                  prefixIcon: Icon(Icons.person, color: Colors.amber),
-                  suffixIcon:
-                      controller.emailText.isNotEmpty
-                          ? IconButton(
-                            onPressed: () {
-                              controller.clearEmail();
-                            },
-                            icon: Icon(Icons.clear, color: Colors.red),
-                          )
-                          : null,
-                  hintText: 'Enter Name',
-                ),
-                cursorColor: Colors.green,
-                cursorHeight: 20,
-                cursorWidth: 2,
-                cursorRadius: Radius.circular(10),
-                style: TextStyle(color: Colors.greenAccent),
-              ),
+              'Log In',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             Obx(
               () => TextField(
@@ -70,31 +32,34 @@ class SignupScreen extends StatelessWidget {
                   controller.emailText.value = value;
                 },
                 decoration: InputDecoration(
-                  fillColor: Colors.blueGrey.withOpacity(0.5),
+                  fillColor: AppColors.container,
                   filled: true,
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.greenAccent),
+                  labelStyle: TextStyle(color: AppColors.text),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.greenAccent),
+                    borderSide: BorderSide(color: AppColors.scaffold),
                   ),
-                  prefixIcon: Icon(Icons.email_outlined, color: Colors.amber),
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: AppColors.scaffold,
+                  ),
                   suffixIcon:
                       controller.emailText.isNotEmpty
                           ? IconButton(
                             onPressed: () {
                               controller.clearEmail();
                             },
-                            icon: Icon(Icons.clear, color: Colors.red),
+                            icon: Icon(Icons.clear, color: AppColors.error),
                           )
                           : null,
                   hintText: 'Enter Email',
                 ),
-                cursorColor: Colors.green,
+                cursorColor: AppColors.text,
                 cursorHeight: 20,
                 cursorWidth: 2,
                 cursorRadius: Radius.circular(10),
-                style: TextStyle(color: Colors.greenAccent),
+                style: TextStyle(color: AppColors.text),
               ),
             ),
             Obx(
@@ -105,18 +70,17 @@ class SignupScreen extends StatelessWidget {
                   controller.passText.value = value;
                 },
                 decoration: InputDecoration(
-                  //on focus show a eye suffix icon for show or unshow password
-                  fillColor: Colors.blueGrey.withOpacity(0.5),
+                  fillColor: AppColors.container,
                   filled: true,
                   labelText: 'Password',
-                  labelStyle: TextStyle(color: Colors.blueAccent),
+                  labelStyle: TextStyle(color: AppColors.text),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueAccent),
+                    borderSide: BorderSide(color: AppColors.scaffold),
                   ),
                   prefixIcon: Icon(
                     Icons.lock_open_outlined,
-                    color: Colors.amber,
+                    color: AppColors.scaffold,
                   ),
                   suffixIcon:
                       controller.isPasswordVisible.value
@@ -124,22 +88,28 @@ class SignupScreen extends StatelessWidget {
                             onPressed: () {
                               controller.togglePasswordVisibility();
                             },
-                            icon: Icon(Icons.visibility, color: Colors.red),
+                            icon: Icon(
+                              Icons.visibility,
+                              color: AppColors.error.withOpacity(0.7),
+                            ),
                           )
                           : IconButton(
                             onPressed: () {
                               controller.togglePasswordVisibility();
                             },
-                            icon: Icon(Icons.visibility_off, color: Colors.red),
+                            icon: Icon(
+                              Icons.visibility_off,
+                              color: AppColors.error.withOpacity(0.7),
+                            ),
                           ),
                   hintText: 'Enter password',
                 ),
                 obscureText: !controller.isPasswordVisible.value,
-                cursorColor: Colors.blue,
+                cursorColor: AppColors.text,
                 cursorHeight: 20,
                 cursorWidth: 2,
                 cursorRadius: Radius.circular(10),
-                style: TextStyle(color: Colors.greenAccent),
+                style: TextStyle(color: AppColors.text),
               ),
             ),
             SizedBox(height: 5),
@@ -147,48 +117,73 @@ class SignupScreen extends StatelessWidget {
               () => ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 10,
-                  shadowColor: Colors.lightBlueAccent,
+                  shadowColor: AppColors.text,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: AppColors.text),
                   ),
                   textStyle: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal,
+                  backgroundColor: AppColors.buttonBackground,
                   //full width
                   minimumSize: Size(double.infinity, 50),
                 ),
                 onPressed: () {
-                  controller.signIn();
+                  if (controller.email.text.isEmpty ||
+                      controller.pass.text.isEmpty) {
+                    Get.snackbar(
+                      'Login Error',
+                      'Empty email or password.',
+                      backgroundColor: AppColors.error,
+                    );
+                  } else {
+                    controller.login();
+                  }
                 },
                 child:
                     controller.isLoading.value
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text('Sign in'),
+                        ? CircularProgressIndicator(color: AppColors.text)
+                        : Text(
+                          'Log in',
+                          style: TextStyle(color: AppColors.text),
+                        ),
               ),
             ),
-            SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(color: AppColors.error),
+                ),
+              ),
+            ),
             GestureDetector(
               onTap: () {
-                Get.back();
+                controller.clearAll();
+                Get.to(SignupScreen());
               },
-              child: Text("Already have an account? Log In!"),
+              child: Text(
+                "Don't have an account? Create Now!",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             Row(
               children: [
                 Expanded(
                   child: Divider(
-                    color: Colors.amber,
+                    color: AppColors.text,
                     indent: 10,
                     endIndent: 10,
                   ),
                 ),
-                Text('or', style: TextStyle(color: Colors.amber)),
+                Text('or', style: TextStyle(color: AppColors.text)),
                 Expanded(
                   child: Divider(
-                    color: Colors.amber,
+                    color: AppColors.text,
                     indent: 10,
                     endIndent: 10,
                   ),
@@ -209,7 +204,7 @@ class SignupScreen extends StatelessWidget {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.white.withOpacity(0.9),
+                      color: AppColors.text,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.green,
@@ -232,7 +227,7 @@ class SignupScreen extends StatelessWidget {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.white.withOpacity(0.9),
+                      color: AppColors.text,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.blue,

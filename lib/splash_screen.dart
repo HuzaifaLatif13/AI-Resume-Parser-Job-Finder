@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:parser/parsing/resume_parser_screen.dart';
+import 'package:parser/view/auth/login_screen.dart';
+import 'package:parser/view/resume_parser_screen.dart';
 
-import 'auth/login_screen.dart';
+import 'const/colors.dart';
 import 'controller/login_controller.dart';
+import 'modals/user.dart';
 
 class SplashScreen extends StatefulWidget {
   LoginController controller = Get.put(LoginController());
@@ -23,9 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(Duration(seconds: 3), () {
       if (widget.controller.auth.currentUser != null) {
-        Get.to(ResumeParserScreen());
+        widget.controller.loadUser();
+        Get.to(() => ResumeParserScreen(resume: Resume()));
       } else {
-        Get.to(LoginScreen());
+        Get.to(() => LoginScreen());
       }
     });
   }
@@ -33,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black12,
+      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+                color: AppColors.text,
               ),
             ),
             Text(
@@ -52,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+                color: AppColors.text,
               ),
             ),
             Text(
@@ -60,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+                color: AppColors.text,
               ),
             ),
             Text(
@@ -68,13 +71,13 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+                color: AppColors.text,
               ),
             ),
             SizedBox(height: 100),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.text,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Lottie.asset(
