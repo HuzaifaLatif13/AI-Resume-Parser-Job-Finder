@@ -23,6 +23,17 @@ This app allows users to upload a PDF file (such as a CV or resume), extracts re
 - **Gemini AI API** (for extracting and analyzing resume content)
 - **PDF Parser** (to extract text from uploaded PDFs)
 
+## 📸 Screenshots
+---
+Upload Resume, Extracted Data, Suggested Roles, Role Jobs
+---
+![1](https://github.com/user-attachments/assets/e18b41f3-9cce-49a3-b954-fa54672969ea)
+---
+Job Details, Apply link, App Options, Data Save Options
+---
+![2](https://github.com/user-attachments/assets/67f6adb3-6b02-4ca6-aa7e-dec00aca766b)
+---
+
 ## 📥 Installation
 1. **Clone the Repository:**
    ```sh
