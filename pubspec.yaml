@@ -54,6 +54,12 @@ dependencies:
   get: ^4.7.2
   google_sign_in: ^6.3.0
   image_picker: ^1.1.2
+  googleapis_auth: ^2.0.0
+  firebase_messaging: ^15.2.5
+  cached_network_image: ^3.4.1
+  app_settings: ^6.1.1
+  flutter_local_notifications: ^19.1.0
+  badges: ^3.1.2
 
 
 dev_dependencies:

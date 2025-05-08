@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -83,17 +84,18 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   }
 
   Future<String?> uploadToCloudinary(File imageFile) async {
-    const cloudName = 'YOUR-CLOUD-NAME';
-    const uploadPreset = 'YOUR-CLOUD-PRESET';
+    const cloudName = 'dhgorpjkd';
+    const uploadPreset = 'flutter_uploads';
 
     final url = Uri.parse(
       'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
     );
-    final request = http.MultipartRequest('POST', url)
-      ..fields['upload_preset'] = uploadPreset
-      ..files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
+    final request =
+        http.MultipartRequest('POST', url)
+          ..fields['upload_preset'] = uploadPreset
+          ..files.add(
+            await http.MultipartFile.fromPath('file', imageFile.path),
+          );
 
     final response = await request.send();
     if (response.statusCode == 200) {
@@ -152,23 +154,50 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               Center(
                 child: GestureDetector(
                   onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 100,
-                    backgroundImage: profileImagePath.value.isNotEmpty
-                        ? NetworkImage(profileImagePath.value)
-                        : AssetImage('assets/profile_placeholder.jpg'),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: CircleAvatar(
-                        radius: 25,
-                        backgroundColor: AppColors.scaffold,
-                        child: Icon(
-                          Icons.camera_alt_outlined,
-                          size: 28,
-                          color: AppColors.text,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 100,
+                        backgroundColor: Colors.transparent,
+                        child: ClipOval(
+                          child:
+                              profileImagePath.value.isNotEmpty
+                                  ? CachedNetworkImage(
+                                    imageUrl: profileImagePath.value,
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                    placeholder:
+                                        (context, url) =>
+                                            CircularProgressIndicator(),
+                                    errorWidget:
+                                        (context, url, error) => Image.asset(
+                                          'assets/profile_placeholder.jpg',
+                                          fit: BoxFit.cover,
+                                        ),
+                                  )
+                                  : Image.asset(
+                                    'assets/profile_placeholder.jpg',
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: CircleAvatar(
+                          radius: 25,
+                          backgroundColor: AppColors.scaffold,
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            size: 28,
+                            color: AppColors.text,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

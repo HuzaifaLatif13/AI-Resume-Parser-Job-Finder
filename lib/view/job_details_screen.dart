@@ -3,13 +3,12 @@ import 'package:parser/const/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailScreen extends StatelessWidget {
-  final Map job;
+  final Map<String, dynamic> job;
 
-  const JobDetailScreen({super.key, required this.job});
+  JobDetailScreen({super.key, required this.job});
 
   Future<void> _launchURL() async {
-    final String? url =
-        job['jobProviders'][0]['url']; // Access first job provider's URL
+    final String? url = job['url']; // Access first job provider's URL
     print(url);
     if (url != null && url.isNotEmpty) {
       final Uri uri = Uri.parse(url);
@@ -25,6 +24,7 @@ class JobDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('job details screen: \n\t\t\t$job');
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -41,11 +41,9 @@ class JobDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Text(
-                  job['title'] ?? 'No Title',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+              Text(
+                job['title'] ?? 'No Title',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -69,6 +67,19 @@ class JobDetailScreen extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
+                      text: "⏱️ Posted Time:\n",
+                      style: TextStyle(
+                        color: AppColors.text,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '${job['date_posted'] ?? 'Unknown'}',
+                      style: TextStyle(color: AppColors.text, fontSize: 16),
+                    ),
+                    TextSpan(text: '\n\n'), // Add spacing
+                    TextSpan(
                       text: "📛 Company:\n",
                       style: TextStyle(
                         color: AppColors.text,
@@ -77,7 +88,7 @@ class JobDetailScreen extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: '${job['company'] ?? 'Unknown'}',
+                      text: '${job['organization'] ?? 'Unknown'}',
                       style: TextStyle(color: AppColors.text, fontSize: 16),
                     ),
                     TextSpan(text: '\n\n'), // Add spacing
@@ -91,7 +102,7 @@ class JobDetailScreen extends StatelessWidget {
                     ),
                     TextSpan(
                       text:
-                          '${job['location'] ?? 'Unknown'}, ${job['job_country'] ?? ''}',
+                          '${job['locations_derived'] ?? 'Unknown'}, ${job['job_country'] ?? ''}',
                       style: TextStyle(
                         color: AppColors.text, // Default text color
                         fontSize: 16,
@@ -108,7 +119,8 @@ class JobDetailScreen extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: '${job['employmentType'] ?? 'N/A'}',
+                      text:
+                          '${(job['employment_type'] is List && job['employment_type'].isNotEmpty) ? job['employment_type'][0] : 'N/A'}',
                       style: TextStyle(
                         color: AppColors.text, // Default text color
                         fontSize: 16,
@@ -126,7 +138,7 @@ class JobDetailScreen extends StatelessWidget {
                     ),
                     TextSpan(
                       text:
-                          '${job['description'] ?? 'No description available.'}',
+                          '${job['linkedin_org_description'] ?? 'No description available.'}',
                       style: TextStyle(
                         color: AppColors.text, // Default text color
                         fontSize: 16,

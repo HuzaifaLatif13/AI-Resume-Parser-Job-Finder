@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:parser/view/auth/login_screen.dart';
 import 'package:parser/view/resume_parser_screen.dart';
 
@@ -36,59 +35,60 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffold,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'AI',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text,
-              ),
-            ),
-            Text(
-              'Resume Parser 📝',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text,
-              ),
-            ),
-            Text(
-              '&',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text,
-              ),
-            ),
-            Text(
-              'Your Job Finder 🔍',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text,
-              ),
-            ),
-            SizedBox(height: 100),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.text,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Lottie.asset(
-                'assets/search.json',
-                width: 150,
-                height: 150,
-                fit: BoxFit.fill,
-              ),
-            ),
-          ],
-        ),
+        child: Image.asset('assets/app_logo.png'),
+        // child: Column(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   crossAxisAlignment: CrossAxisAlignment.center,
+        //   children: [
+        //     Text(
+        //       'AI',
+        //       style: TextStyle(
+        //         fontSize: 40,
+        //         fontWeight: FontWeight.bold,
+        //         color: AppColors.text,
+        //       ),
+        //     ),
+        //     Text(
+        //       'Resume Parser 📝',
+        //       style: TextStyle(
+        //         fontSize: 30,
+        //         fontWeight: FontWeight.bold,
+        //         color: AppColors.text,
+        //       ),
+        //     ),
+        //     Text(
+        //       '&',
+        //       style: TextStyle(
+        //         fontSize: 40,
+        //         fontWeight: FontWeight.bold,
+        //         color: AppColors.text,
+        //       ),
+        //     ),
+        //     Text(
+        //       'Your Job Finder 🔍',
+        //       style: TextStyle(
+        //         fontSize: 30,
+        //         fontWeight: FontWeight.bold,
+        //         color: AppColors.text,
+        //       ),
+        //     ),
+        //     SizedBox(height: 100),
+        //     Container(
+        //       decoration: BoxDecoration(
+        //         color: AppColors.text,
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //       child: Lottie.asset(
+        //         'assets/search.json',
+        //         width: 150,
+        //         height: 150,
+        //         fit: BoxFit.fill,
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }

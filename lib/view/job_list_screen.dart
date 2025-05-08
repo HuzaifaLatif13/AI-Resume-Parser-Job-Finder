@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
@@ -43,11 +44,15 @@ class _JobListScreenState extends State<JobListScreen> {
       isLoading = true;
       isError = false;
     });
+    final API_KEY = '6e946ad07amshdf2a8fa7c53c3d2p162825jsnf51f72ac9c25';
     // final API_KEY = '2ba0628913mshba893feccba5faep1dfaf6jsn66c58f2c64c9';
-    final API_KEY = 'bddc4b1903msh9c858829b644892p132bf1jsnc770a5458e0d';
+    // final API_KEY = 'bddc4b1903msh9c858829b644892p132bf1jsnc770a5458e0d';
     final searchQuery = widget.searchQuery;
+    // final url = Uri.parse(
+    //   'https://jobs-api14.p.rapidapi.com/v2/list?query=$searchQuery&location=$location&autoTranslateLocation=true&remoteOnly=false&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor',
+    // );
     final url = Uri.parse(
-      'https://jobs-api14.p.rapidapi.com/v2/list?query=$searchQuery&location=$location&autoTranslateLocation=true&remoteOnly=false&employmentTypes=fulltime%3Bparttime%3Bintern%3Bcontractor',
+      'https://linkedin-job-search-api.p.rapidapi.com/active-jb-7d?limit=10&offset=0&title_filter=%22$searchQuery%22&location_filter=%22lahore%22',
     );
 
     try {
@@ -55,38 +60,31 @@ class _JobListScreenState extends State<JobListScreen> {
         url,
         headers: {
           'x-rapidapi-key': API_KEY,
-          'x-rapidapi-host': 'jobs-api14.p.rapidapi.com',
+          'x-rapidapi-host': 'linkedin-job-search-api.p.rapidapi.com',
         },
       );
 
       if (response.statusCode == 200) {
+        print('yes');
         final decodedResponse = json.decode(response.body);
-        if (decodedResponse.containsKey('jobs')) {
-          final List<dynamic> newJobs = decodedResponse['jobs'];
+        print(decodedResponse); // Check the structure
 
-          // Use a Set to remove duplicates based on job ID
-          final Set<String> existingJobIds =
-              jobs.map((job) => job['id'].toString()).toSet();
-          final List<dynamic> filteredJobs =
-              newJobs
-                  .where(
-                    (job) => !existingJobIds.contains(job['id'].toString()),
-                  )
-                  .toList();
+        final List<dynamic> newJobs = decodedResponse;
 
-          setState(() {
-            jobs.addAll(filteredJobs);
-            isLoading = false;
-          });
+        final Set<String> existingJobIds =
+            jobs.map((job) => job['id'].toString()).toSet();
 
-          await saveJobs(jobs);
-        } else {
-          throw Exception('Invalid API response');
-        }
-      } else {
-        print('API Response Code: ${response.statusCode}');
-        await loadJobs(); // Load cached jobs if API fails
-        throw Exception('Failed to load jobs');
+        final List<dynamic> filteredJobs =
+            newJobs
+                .where((job) => !existingJobIds.contains(job['id'].toString()))
+                .toList();
+
+        setState(() {
+          jobs.addAll(filteredJobs);
+          isLoading = false;
+        });
+
+        await saveJobs(jobs, searchQuery: searchQuery);
       }
     } catch (e) {
       print('Error: $e');
@@ -98,7 +96,11 @@ class _JobListScreenState extends State<JobListScreen> {
     }
   }
 
-  Future<void> saveJobs(List<dynamic> newJobs) async {
+  Future<void> saveJobs(
+    List<dynamic> newJobs, {
+    String searchQuery = "software engineer",
+  }) async {
+    print('Saving Jobs to Memory');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // Load existing jobs
     String? existingJobsJSON = prefs.getString('savedJobs');
@@ -106,8 +108,42 @@ class _JobListScreenState extends State<JobListScreen> {
         existingJobsJSON != null ? jsonDecode(existingJobsJSON) : [];
     // Append new jobs while avoiding duplicates
     for (var job in newJobs) {
+      print('\t\t\t\tsaving...');
       if (!existingJobs.any((existingJob) => existingJob['id'] == job['id'])) {
         existingJobs.add(job);
+        Map<String, dynamic> filteredJob = {
+          'id': job['id'],
+          'title': job['title'],
+          'organization': job['organization'],
+          'url': job['url'],
+          'date_posted': job['date_posted'],
+          'locations_derived': job['locations_derived'],
+          'employment_type':
+              (job['employment_type'] != null &&
+                      job['employment_type'] is List &&
+                      job['employment_type'].isNotEmpty)
+                  ? job['employment_type'][0]
+                  : null,
+          'linkedin_org_description': job['linkedin_org_description'],
+        };
+        final docRef = FirebaseFirestore.instance
+            .collection('jobs')
+            .doc('all-jobs')
+            .collection(searchQuery)
+            .doc(filteredJob['id'].toString());
+
+        // Check if job already exists
+        final existingDoc = await docRef.get();
+
+        if (existingDoc.exists) {
+          print('Job already exists');
+          // Update if exists
+          await docRef.update(filteredJob);
+        } else {
+          print('New Job');
+          // Create new if not exists
+          await docRef.set(filteredJob);
+        }
       }
     }
     // Save updated job list
@@ -129,63 +165,6 @@ class _JobListScreenState extends State<JobListScreen> {
       });
       print('Loaded Jobs: $jobsList');
     }
-  }
-
-  void openFilters() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Apply Filters",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Job Type",
-                      ),
-                      value: jobType.isEmpty ? null : jobType,
-                      items:
-                          ["", "onsite", "remote", "hybrid"].map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type.isEmpty ? "All" : type),
-                            );
-                          }).toList(),
-                      onChanged: (value) {
-                        setModalState(() {
-                          jobType = value ?? "";
-                        });
-                      },
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        fetchJobs();
-                      },
-                      child: Text("Apply Filters"),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -246,7 +225,6 @@ class _JobListScreenState extends State<JobListScreen> {
 
             SizedBox(height: 15),
 
-            // Job List with Random Colors
             Expanded(
               child:
                   isLoading
@@ -302,7 +280,7 @@ class _JobListScreenState extends State<JobListScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                job['company'] ?? 'Unknown Company',
+                                job['organization'] ?? 'Unknown Company',
                                 style: TextStyle(fontSize: 14),
                               ),
                               trailing: Icon(

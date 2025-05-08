@@ -1,19 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:badges/badges.dart' as badges;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:parser/const/colors.dart';
 import 'package:parser/controller/login_controller.dart';
+import 'package:parser/controller/notification_controller.dart';
+import 'package:parser/controller/notification_service.dart';
+import 'package:parser/controller/service_key.dart';
 import 'package:parser/modals/user.dart';
 import 'package:parser/view/drawer/resume_scans.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
+import '../controller/send_notification.dart';
+import '../main.dart';
 import 'auth/login_screen.dart';
 import 'drawer/myaccount_screen.dart';
 import 'job_list_screen.dart';
+import 'notification_screen.dart';
 
 class ResumeParserScreen extends StatefulWidget {
   final LoginController controller = Get.find<LoginController>();
@@ -26,6 +34,7 @@ class ResumeParserScreen extends StatefulWidget {
 }
 
 class _ResumeParserScreenState extends State<ResumeParserScreen> {
+  NotificationService notificationService = NotificationService();
   var isLoading = false.obs;
   var jobLoading = false.obs;
 
@@ -277,6 +286,18 @@ Return the response in JSON format, containing only a list of job roles:
   }
 
   @override
+  void initState() {
+    super.initState();
+    notificationService.requestNotificationPermission();
+    notificationService.getToken();
+    notificationService.firebaseInit(context);
+    notificationService.offNotifications(context);
+    // FcmService.firebaseinit();
+  }
+
+  NotificationController notifyController = Get.put(NotificationController());
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -291,9 +312,47 @@ Return the response in JSON format, containing only a list of job roles:
           IconButton(
             onPressed: () async {
               await widget.controller.loadUser();
+              widget.resume.name.value = "Not Found";
+              widget.resume.email.value = "Not Found";
+              widget.resume.phone.value = "Not Found";
+              widget.resume.skills.value = "Not Found";
+              widget.resume.education.value = "Not Found";
+              widget.resume.projects.value = "Not Found";
+              widget.resume.jobRoles.clear();
+              SendNotification.sendNotification(
+                token: await NotificationService().getToken(),
+                title: widget.controller.userAccount.name.value,
+                body: 'Welcome to the app😊',
+                data: {
+                  'name': widget.controller.userAccount.name.value,
+                  'email': widget.controller.userAccount.email.value,
+                },
+              );
+              await fetchAndNotifyLatestJobs("software engineer");
               setState(() {});
             },
             icon: Icon(Icons.refresh),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Obx(
+              () => badges.Badge(
+                position: badges.BadgePosition.topEnd(top: 0, end: 1),
+                showBadge: notifyController.NotificationCount.value > 0,
+                badgeContent: Obx(
+                  () => Text(
+                    notifyController.NotificationCount.value.toString(),
+                    style: TextStyle(color: AppColors.text),
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    Get.to(() => NotificationScreen());
+                  },
+                  icon: Icon(Icons.notifications_active),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -616,12 +675,33 @@ Widget myDrawer(LoginController controller) {
           () => UserAccountsDrawerHeader(
             decoration: BoxDecoration(color: AppColors.drawer),
             currentAccountPicture: CircleAvatar(
-              backgroundImage:
+              backgroundColor: Colors.white,
+              child:
                   controller.userAccount.profilePicture.value.isNotEmpty
-                      ? NetworkImage(
-                        controller.userAccount.profilePicture.value,
+                      ? ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: controller.userAccount.profilePicture.value,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) =>
+                                  CircularProgressIndicator(strokeWidth: 2),
+                          errorWidget:
+                              (context, url, error) => Image.asset(
+                                'assets/profile_placeholder.jpg',
+                                fit: BoxFit.cover,
+                              ),
+                        ),
                       )
-                      : AssetImage('assets/profile_placeholder.jpg'),
+                      : ClipOval(
+                        child: Image.asset(
+                          'assets/profile_placeholder.jpg',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
             ),
             accountName: Text(
               controller.userAccount.name.value,

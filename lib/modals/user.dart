@@ -6,6 +6,7 @@ class UserAccount {
   var email = 'No Email'.obs;
   var profilePicture = ''.obs;
   var password = '********'.obs;
+  var deviceToken = '';
   var resumes = <Resume>[].obs;
 
   // Constructor
@@ -14,6 +15,7 @@ class UserAccount {
     String? name,
     String? email,
     String? profilePicture,
+    String? deviceToken,
     String? password,
     List<Resume>? resumes,
   }) {
@@ -21,6 +23,7 @@ class UserAccount {
     this.name.value = name ?? 'Unknown';
     this.email.value = email ?? 'No Email';
     this.profilePicture.value = profilePicture ?? '';
+    this.deviceToken = deviceToken ?? '';
     this.password.value = password ?? '';
     if (resumes != null) {
       this.resumes.assignAll(resumes);
@@ -34,6 +37,7 @@ class UserAccount {
       'name': name.value,
       'email': email.value,
       'profilePicture': profilePicture.value,
+      'deviceToken': deviceToken,
       'password': password.value,
       'resumes': resumes.map((resume) => resume.toJson()).toList(),
     };
@@ -46,6 +50,7 @@ class UserAccount {
       name: json['name'],
       email: json['email'],
       profilePicture: json['profilePicture'],
+      deviceToken: json['deviceToken'],
       password: json['password'],
       resumes:
           (json['resumes'] as List<dynamic>?)

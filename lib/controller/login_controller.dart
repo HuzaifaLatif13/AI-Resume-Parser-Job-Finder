@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:parser/controller/notification_service.dart';
 import 'package:parser/modals/user.dart';
 
 import '../view/resume_parser_screen.dart';
@@ -63,7 +64,7 @@ class LoginController extends GetxController {
 
       if (snapshot.exists) {
         userAccount = UserAccount.fromJson(snapshot.data()!);
-        print(userAccount.resumes.length);
+        // print(userAccount.resumes.length);
       }
     }
   }
@@ -77,7 +78,7 @@ class LoginController extends GetxController {
       );
 
       String uid = auth.currentUser!.uid;
-
+      NotificationService notificationService = NotificationService();
       userAccount = UserAccount(
         id: uid,
         name: name.text.trim(),
@@ -85,6 +86,7 @@ class LoginController extends GetxController {
         profilePicture:
             "https://www.freepik.com/premium-vector/3d-vector-icon-simple-blue-user-profile-icon-with-white-features_404491443.htm#fromView=keyword&page=1&position=12&uuid=7cef09de-8ff2-43b3-8dbf-236edf28caf8&query=Default+User",
         password: pass.text.trim(),
+        deviceToken: await notificationService.getToken(),
         resumes: [],
       );
       await FirebaseFirestore.instance
@@ -147,7 +149,7 @@ class LoginController extends GetxController {
 
       // Get UID of the signed-in user
       final String uid = userCredential.user!.uid;
-
+      NotificationService notificationService = NotificationService();
       //store user on firebase
       UserAccount newUser = UserAccount(
         id: uid,
@@ -155,6 +157,7 @@ class LoginController extends GetxController {
         email: user.email,
         profilePicture: user.photoUrl,
         password: '******',
+        deviceToken: await notificationService.getToken(),
         resumes: [],
       );
       await FirebaseFirestore.instance
@@ -183,6 +186,9 @@ class LoginController extends GetxController {
   }
 
   Future<void> updateDoc(UserAccount _user) async {
+    if (_user.deviceToken == '') {
+      _user.deviceToken = await NotificationService().getToken();
+    }
     await FirebaseFirestore.instance
         .collection('users')
         .doc(_user.id.value)
